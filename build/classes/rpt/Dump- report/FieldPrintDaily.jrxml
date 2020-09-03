@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="824" leftMargin="9" rightMargin="9" topMargin="3" bottomMargin="20" isFloatColumnFooter="true" uuid="caf9e7f1-57b5-4a8b-9f90-2a5954031ff9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="Groupname" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Individual"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LoanOfficer" class="java.lang.String"/>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["HELPING HANDS FOR ACTIVE PEOPLE"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from fieldprintviewDaily
+where groupid=$P{Groupname}
+order by custno]]>
+	</queryString>
+	<field name="custno" class="java.lang.String"/>
+	<field name="Daily Savings" class="java.math.BigDecimal"/>
+	<field name="DASCA Savings" class="java.math.BigDecimal"/>
+	<field name="Voluntary Savings" class="java.math.BigDecimal"/>
+	<field name="Regln6" class="java.math.BigDecimal"/>
+	<field name="Regln7" class="java.math.BigDecimal"/>
+	<field name="Regln8" class="java.math.BigDecimal"/>
+	<field name="FARMLN6" class="java.math.BigDecimal"/>
+	<field name="INDLN6" class="java.math.BigDecimal"/>
+	<field name="MIDTMLN" class="java.math.BigDecimal"/>
+	<field name="SPELN" class="java.math.BigDecimal"/>
+	<field name="cust2" class="java.lang.String"/>
+	<field name="Lnid" class="java.lang.String"/>
+	<field name="overdue" class="java.math.BigDecimal"/>
+	<field name="loanid" class="java.lang.String"/>
+	<field name="instalment" class="java.math.BigDecimal"/>
+	<field name="Loanproduct" class="java.lang.String"/>
+	<field name="cust3" class="java.lang.String"/>
+	<field name="Accountname" class="java.lang.String"/>
+	<field name="ApprovedDate" class="java.lang.String"/>
+	<field name="groupID" class="java.lang.String"/>
+	<variable name="TotalSav" class="java.lang.String" resetType="Column">
+		<variableExpression><![CDATA[]]></variableExpression>
+	</variable>
+	<variable name="LoanBal" class="java.lang.String">
+		<variableExpression><![CDATA[$F{Loanproduct}.equals("Regln6")? $F{Regln6}:
+$F{Loanproduct}=="FARMLN6"? $F{FARMLN6} :
+$F{Loanproduct}=="INDLN6"? $F{INDLN6}:
+$F{Loanproduct}=="MIDTMLN"? $F{MIDTMLN}: $F{SPELN}]]></variableExpression>
+	</variable>
+	<variable name="Regular Savings_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{Daily Savings}]]></variableExpression>
+	</variable>
+	<variable name="Voluntary Savings_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{Voluntary Savings}]]></variableExpression>
+	</variable>
+	<variable name="Voluntary Savings_2" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{Daily Savings}!=null && $F{Voluntary Savings}!=null ?  $F{Daily Savings}.add($F{Voluntary Savings}):$F{Voluntary Savings}!=null ?  $F{Voluntary Savings}: $F{Daily Savings}]]></variableExpression>
+	</variable>
+	<variable name="Regln6_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{Loanproduct}.equals("REGLN6") ? $F{Regln6}.negate():  $F{Loanproduct}.equals("FARMLN6")? $F{FARMLN6}.negate() :  $F{Loanproduct}.equals("INDLN6") ? $F{INDLN6}.negate(): $F{Loanproduct}.equals("MIDTMLN") ? $F{MIDTMLN}.negate(): $F{SPELN}.negate()]]></variableExpression>
+	</variable>
+	<variable name="SN" class="java.lang.Number" incrementType="Report" calculation="Count"/>
+	<variable name="Expect" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{overdue}.add( $F{instalment} )]]></variableExpression>
+	</variable>
+	<variable name="instalment_1" class="java.math.BigDecimal" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{instalment}]]></variableExpression>
+	</variable>
+	<variable name="overdue_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{overdue}]]></variableExpression>
+	</variable>
+	<variable name="TExpected" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{overdue}.add($F{instalment})]]></variableExpression>
+	</variable>
+	<variable name="DASCA Savings_1" class="java.math.BigDecimal" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{DASCA Savings}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="52" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="193" y="20" width="256" height="17" backcolor="#FFCCFF" uuid="b40ef688-2a50-400a-98bc-700e0aeb74bc"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIELD COLLECTION SHEET FOR DAILY SAVINGS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="17" y="39" width="128" height="13" uuid="71b77cdc-fc46-407a-b09a-eefeb5444146"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOAN OFFICER'S NAME:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="411" y="36" width="100" height="13" uuid="3c78730b-434b-4899-93b9-7f6dc34caf8f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Groupname}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="330" y="37" width="69" height="13" uuid="00cd076f-38d7-4947-bfb1-c7cb940bf841"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNION NAME:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="155" y="38" width="100" height="13" uuid="704a5c29-4cc8-4cdf-9dc8-d0a92aa1e71e"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{LoanOfficer}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="82" y="18" width="100" height="20" uuid="14903f3f-f67b-4f55-a059-95c95eb6db1d"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="17" y="18" width="58" height="20" uuid="3e5c485f-7133-4fb0-af30-5632d2be194d"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Printed on:]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="171" y="0" width="378" height="20" forecolor="#0000CC" uuid="9a8fb02f-4143-492b-9a1f-d3d9b0606971"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="4" width="37" height="24" isRemoveLineWhenBlank="true" uuid="7ef17f71-71c0-4a6b-8d99-492efdbb225c"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[custno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="4" width="37" height="24" isRemoveLineWhenBlank="true" uuid="f30b9033-00e7-4e21-b455-8468c34705c5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[loanid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="91" y="4" width="132" height="24" isRemoveLineWhenBlank="true" uuid="2d312b0f-2233-4180-9930-2913959de16c"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Accountname]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="4" width="61" height="24" isRemoveLineWhenBlank="true" uuid="98e29cc0-ffec-4297-845b-f8cb272b1ff0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DailySavgs]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="4" width="63" height="24" isRemoveLineWhenBlank="true" uuid="cf7901cb-c7b4-4a6e-9242-31bc85c11dca"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Loanproduct]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="423" y="4" width="47" height="24" isRemoveLineWhenBlank="true" uuid="50f9e4a8-37e8-4686-ab7e-c20fce0ff201"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TotalSav]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="223" y="4" width="44" height="24" uuid="bd236b40-a07a-4747-9430-02bdd7c26319"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DailySav]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="4" width="42" height="24" uuid="16c82409-0e11-4f30-b85b-130f8bb29149"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[VolSav]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="533" y="4" width="59" height="24" isRemoveLineWhenBlank="true" uuid="47e4806a-55d8-47b5-b757-3204624c2f6f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LoanBal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="592" y="4" width="48" height="24" uuid="d10a210e-d29c-4bb6-8f89-17132bb40ba7"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[instalment]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="4" width="58" height="24" uuid="4a097cd9-654a-47bf-bdf7-23f1b017f7b6"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[overdue]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="698" y="4" width="41" height="24" uuid="1566fbe3-0846-4e13-8a65-f775852cd39f"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Repay]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="791" y="4" width="43" height="24" uuid="c432cfee-94a5-4f68-afc2-3ab54541aa9e"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ApprovedDate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="739" y="4" width="52" height="24" uuid="0ab63e1b-86f2-46d8-9339-8d8ab6bfd511"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Expected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="8" width="54" height="20" uuid="b1b0b392-f1c0-4cca-b05e-7152e39fb842"/>
+				<text><![CDATA[DASCA Savings]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="17" y="0" width="37" height="20" isRemoveLineWhenBlank="true" uuid="2b227c10-fa69-4b0e-b8d5-9672d1759184"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{custno}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="54" y="0" width="37" height="20" uuid="aa819442-a5c4-4776-b3ff-acdce9db0b8b"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{loanid}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="91" y="0" width="132" height="20" isRemoveLineWhenBlank="true" uuid="35802622-9973-421e-bec5-20c9c33470a5"/>
+				<box bottomPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Accountname}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="470" y="0" width="63" height="20" uuid="76d27b77-6590-4f6b-a6ab-5b560124cfb4"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Loanproduct}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="423" y="0" width="47" height="20" isRemoveLineWhenBlank="true" uuid="be3721ff-cb19-4319-8c1b-fdf5264e8e99"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Daily Savings}!=null && $F{DASCA Savings}!=null ? 
+$F{Daily Savings}.add($F{DASCA Savings}):$F{DASCA Savings}!=null ?
+ $F{DASCA Savings}:
+$F{Daily Savings}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="533" y="0" width="59" height="20" uuid="eb631120-f984-44e6-ab60-5adc7f0b39ea"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Loanproduct}.equals("REGLN6") ? $F{Regln6}.negate():
+  $F{Loanproduct}.equals("REGLN7") ? $F{Regln7}.negate():
+ $F{Loanproduct}.equals("REGLN8") ? $F{Regln8}.negate():
+ $F{Loanproduct}.equals("FARMLN6")? $F{FARMLN6}.negate() :
+ $F{Loanproduct}.equals("INDLN6") ? $F{INDLN6}.negate():
+$F{Loanproduct}.equals("MIDTMLN") ? $F{MIDTMLN}.negate(): $F{SPELN}.negate()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="223" y="0" width="44" height="20" uuid="15499be4-6fb4-463a-8369-283c1806392b"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="267" y="0" width="44" height="20" uuid="2892c9e4-1d50-4aa9-8665-30af43f58d76"/>
+			</rectangle>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="592" y="0" width="48" height="20" uuid="835170e2-5380-4c89-8e51-1304593671e1"/>
+				<box bottomPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instalment}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="640" y="0" width="58" height="20" uuid="94709a2a-2c8d-4a40-b250-f08d0b364080"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdue}.compareTo( java.math.BigDecimal.ZERO )>0 ? $F{overdue}:0.00]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="698" y="0" width="41" height="20" uuid="a38ace41-6b8d-4d32-9313-8ad15d726b79"/>
+			</rectangle>
+			<textField>
+				<reportElement x="791" y="0" width="43" height="20" uuid="bc49e9bf-7e74-4492-89c7-8b8c900dab12"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ApprovedDate}]]></textFieldExpression>
+			</textField>
+			<elementGroup>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="311" y="0" width="59" height="20" uuid="749f0c5c-819e-4a4f-b17f-4d69a3045e84"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Daily Savings}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<textField>
+				<reportElement x="0" y="0" width="17" height="20" uuid="d19d7d5a-c426-4dce-bede-84d9a1b51308"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="739" y="0" width="52" height="20" uuid="757c9aff-6168-4a74-b847-86162ca3499c"/>
+				<box topPadding="0" leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{overdue}.add($F{instalment})]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="370" y="1" width="53" height="20" uuid="645745b8-715c-4c57-92b2-256a39706a2d"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{DASCA Savings}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="0" width="63" height="20" uuid="4328fdbe-e17f-46cd-b9ef-5d2ccd6deae5"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="423" y="0" width="47" height="18" uuid="b5532502-f003-41d1-b2ae-fa83397265cd"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Voluntary Savings_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="311" y="0" width="59" height="18" uuid="8c9c0d38-ae1f-4217-862b-f6eb494b4303"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Regular Savings_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="533" y="0" width="59" height="18" uuid="e5f04555-ee69-4f39-8cc4-aec1b8bd08b5"/>
+				<box bottomPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Regln6_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="592" y="0" width="49" height="18" uuid="02eea9f8-d3c5-4460-999a-efcd455f2f87"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{instalment_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="641" y="0" width="58" height="18" uuid="cacd18e4-563b-4691-b1b9-2cfdc5e614cc"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{overdue_1}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="267" y="0" width="44" height="18" uuid="eaef9303-0a9b-482c-93a2-adb4612fd6ed"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="223" y="0" width="44" height="18" uuid="c84ef397-7894-42a9-9931-d861a8c835aa"/>
+			</rectangle>
+			<textField pattern="#,##0.00">
+				<reportElement x="739" y="1" width="51" height="17" uuid="5628449f-7df6-422f-81bb-7797851d2843"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TExpected}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="370" y="0" width="54" height="18" uuid="c6ce4f0d-c26b-4aa8-964d-2ff77c29be20"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{DASCA Savings_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="58" splitType="Stretch">
+			<textField>
+				<reportElement x="671" y="0" width="80" height="20" uuid="4bc6b351-1d09-4583-a2e7-dbe1db052f9d"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="751" y="1" width="40" height="19" uuid="755fc16b-6bf9-49e0-9eb7-ddb80b91c5f0"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="64" y="40" width="100" height="15" uuid="2f7d7c6a-799c-4217-977c-f1dd1c7d1dfc"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="182" y="40" width="273" height="14" uuid="98c9cb61-8aa2-4d41-93b0-26741c182c82"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[CSO NAME/SIGN:_______________________________]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="547" y="40" width="255" height="14" uuid="db417cf3-4feb-4a6d-8e6f-c542087627e9"/>
+				<textElement textAlignment="Justified">
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[BM NAME/SIGN:___________________________]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="107" y="0" width="108" height="20" uuid="876c0579-5e53-4411-a4c1-a88248e84ccd"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="17" y="0" width="74" height="20" uuid="aef6912a-4dae-4876-895e-bdd31fe54d48"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNION PURSE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="411" y="0" width="112" height="20" uuid="8c80adad-41da-4bf0-bd0e-4f1865a135ad"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL COLLECTION]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="533" y="1" width="108" height="20" uuid="f8419289-fbb5-4bb7-a931-594b9cabaed8"/>
+			</rectangle>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Immediate"/>
+	</summary>
+</jasperReport>

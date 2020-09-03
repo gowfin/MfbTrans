@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="20" bottomMargin="20" uuid="c125e8e5-13c4-4108-8c34-fb4ff06ec03b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2019-01-02"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="todate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2019-08-02"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select count(distinct Custno) 'Members',PrimaryOfficerID,'Savings' ProductID
+ from Deposit d left outer join Groups g on g.GroupID=d.GroupID
+where status='Active' 
+group by PrimaryOfficerID 
+union all
+select count(distinct Custno) 'Members',PrimaryOfficerID,'Loans' ProductID 
+ from Loans l  left outer join Groups g on g.GroupID=l.GroupID
+where status='Active' 
+group by PrimaryOfficerID
+]]>
+	</queryString>
+	<field name="Members" class="java.lang.Integer"/>
+	<field name="PrimaryOfficerID" class="java.lang.String"/>
+	<field name="ProductID" class="java.lang.String"/>
+	<variable name="ProductID_1" class="java.lang.Integer" resetType="Group" resetGroup="Status" calculation="Sum">
+		<variableExpression><![CDATA[$F{Members}]]></variableExpression>
+	</variable>
+	<group name="Status">
+		<groupExpression><![CDATA[$F{ProductID}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<textField>
+					<reportElement x="124" y="2" width="200" height="20" uuid="a0850ab0-640c-44d9-8316-9145dd97506a"/>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total "+$V{ProductID_1}+" "+$F{ProductID}+" Count"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="35" y="2" width="51" height="20" uuid="a870f10c-f77f-4be8-bae3-34ed9907bf4d"/>
+					<box>
+						<pen lineWidth="1.0" lineStyle="Double"/>
+						<topPen lineWidth="1.0" lineStyle="Double"/>
+						<leftPen lineWidth="1.0" lineStyle="Double"/>
+						<bottomPen lineWidth="1.0" lineStyle="Double"/>
+						<rightPen lineWidth="1.0" lineStyle="Double"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{ProductID_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="63" y="25" width="337" height="17" uuid="830b8c25-2c0c-434f-b62a-4fbb07bb3840"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clients and Borrowers (SUMMARY)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="224" y="39" width="69" height="16" uuid="1116d277-0259-48c5-a8c8-d54410b97f2e"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fromdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="186" y="39" width="35" height="15" uuid="f07c81ca-4044-49f6-8303-bc70f830e700"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AS AT]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="35" y="4" width="512" height="20" uuid="8760a214-9240-4ba9-ac1e-e2f0f49a645d"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="224" y="1" width="100" height="20" uuid="6da9bd57-9b0c-4b90-b7ef-77ff5b33bcbc"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Double"/>
+					<topPen lineWidth="1.0" lineStyle="Double"/>
+					<leftPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<rightPen lineWidth="1.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PrimaryOfficerID]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="124" y="1" width="100" height="20" uuid="6e7c5463-2474-4f6f-b6c5-ad420aba3b4d"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Double"/>
+					<topPen lineWidth="1.0" lineStyle="Double"/>
+					<leftPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<rightPen lineWidth="1.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ProductID}+" Count"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="123" y="1" width="100" height="20" uuid="d8376761-b114-4581-9292-6145df5b5c30"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Double"/>
+					<topPen lineWidth="1.0" lineStyle="Double"/>
+					<leftPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<rightPen lineWidth="1.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Members}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="224" y="1" width="100" height="20" uuid="870fe747-6996-411d-a894-57104fb959e5"/>
+				<box>
+					<pen lineWidth="1.0" lineStyle="Double"/>
+					<topPen lineWidth="1.0" lineStyle="Double"/>
+					<leftPen lineWidth="1.0" lineStyle="Double"/>
+					<bottomPen lineWidth="1.0" lineStyle="Double"/>
+					<rightPen lineWidth="1.0" lineStyle="Double"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PrimaryOfficerID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="19" width="164" height="17" uuid="6968182d-34a4-4a1e-8b31-46f3e8e61e34"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED  AS AT SYSTEM DATE:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="186" y="19" width="137" height="17" uuid="6cfe2e07-0991-4f0b-bc06-87a70ab72e8d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="16" width="80" height="20" uuid="380ae50e-6145-430e-88a3-bd386a61f4b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="16" width="40" height="20" uuid="433a17ff-0b7b-4c89-9e65-393342b510f3"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

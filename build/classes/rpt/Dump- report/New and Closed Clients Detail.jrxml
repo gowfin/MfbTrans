@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="20" bottomMargin="20" uuid="c125e8e5-13c4-4108-8c34-fb4ff06ec03b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2019-01-02"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="todate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2019-08-02"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select c.Custno,lastname+' '+middlename+' '+firstname as 'Client Name',Gender,Phone,c.DateCreated,
+c.Status,groupname,PrimaryOfficerID,COUNT(d.CustNo) deposit,COUNT(l.CustNo) loans from clients c left outer join Groups g on g.GroupID=c.GroupID left outer  join 
+Deposit d on d.CustNo=c.Custno left outer  join Loans l on l.CustNo=c.Custno
+group by  c.Custno,Gender,Phone,c.DateCreated,lastname,middlename,firstname,c.Status,groupname,PrimaryOfficerID
+having COUNT(d.CustNo)=0 and COUNT(l.CustNo)=0
+order by status,PrimaryOfficerID]]>
+	</queryString>
+	<field name="Custno" class="java.lang.String"/>
+	<field name="Client Name" class="java.lang.String"/>
+	<field name="Gender" class="java.lang.String"/>
+	<field name="Phone" class="java.lang.String"/>
+	<field name="DateCreated" class="java.lang.String"/>
+	<field name="Status" class="java.lang.String"/>
+	<field name="groupname" class="java.lang.String"/>
+	<field name="PrimaryOfficerID" class="java.lang.String"/>
+	<field name="deposit" class="java.lang.Integer"/>
+	<field name="loans" class="java.lang.Integer"/>
+	<variable name="SN" class="java.lang.Integer" incrementType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+	</variable>
+	<variable name="Status_1" class="java.lang.Integer" resetType="Group" resetGroup="Product" calculation="Sum">
+		<variableExpression><![CDATA[$F{Status}.equals("Active")? 1:0]]></variableExpression>
+	</variable>
+	<variable name="Status_2" class="java.lang.Integer" resetType="Group" resetGroup="Product" calculation="Sum">
+		<variableExpression><![CDATA[$F{Status}.equals("Closed")? 1:0]]></variableExpression>
+	</variable>
+	<variable name="Status_3" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{Status}.equals("Active")? 1:0]]></variableExpression>
+	</variable>
+	<variable name="Status_4" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{Status}.equals("Closed")? 1:0]]></variableExpression>
+	</variable>
+	<group name="Product">
+		<groupExpression><![CDATA[$F{PrimaryOfficerID}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<staticText>
+					<reportElement x="162" y="0" width="108" height="18" uuid="6ce53dac-eaa2-46bd-8d91-f44700462ae5"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<text><![CDATA[TOTAL CLIENTS]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="12" y="2" width="100" height="20" uuid="a9a285c2-5c63-4a3e-bd58-7a7aac335f30"/>
+					<textFieldExpression><![CDATA[$F{PrimaryOfficerID}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="282" y="0" width="62" height="20" uuid="de27bc7a-1022-41e2-b52c-7734d70e293e"/>
+					<textFieldExpression><![CDATA[$V{Status_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="155" y="26" width="381" height="32" uuid="830b8c25-2c0c-434f-b62a-4fbb07bb3840"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MEMBERS WITHOUT ACCOUNTS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="40" width="100" height="20" uuid="1116d277-0259-48c5-a8c8-d54410b97f2e"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$P{fromdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="48" height="17" uuid="f07c81ca-4044-49f6-8303-bc70f830e700"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PrintDate]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="35" y="4" width="512" height="20" uuid="8760a214-9240-4ba9-ac1e-e2f0f49a645d"/>
+				<textElement textAlignment="Justified">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="1" width="15" height="19" uuid="c34cd014-a1ee-4123-ab99-89f11d7e1621"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[SN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="1" width="49" height="20" uuid="608da079-5fc1-402e-9862-0b4b7f9eb4f0"/>
+				<text><![CDATA[Custno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="1" width="95" height="18" uuid="597cfc1f-cf1c-424c-9ea8-d8cc348847f9"/>
+				<text><![CDATA[Group Name]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="19" width="824" height="1" uuid="7d3ff18f-99b8-481e-832b-95d754a3fe61"/>
+			</line>
+			<staticText>
+				<reportElement x="477" y="1" width="100" height="16" uuid="639e00c3-0fbd-466a-9658-2573381b0363"/>
+				<text><![CDATA[PrimaryOfficerID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="76" y="1" width="134" height="20" uuid="bb9f4fba-866d-4efd-8076-5a69121a6378"/>
+				<text><![CDATA[Client Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="210" y="1" width="72" height="20" uuid="7bf5386b-3b1b-42d1-8466-c535448e65fd"/>
+				<text><![CDATA[Phone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="282" y="2" width="53" height="17" uuid="7aa83d9e-996f-4f1a-aff3-39b1303b6baf"/>
+				<text><![CDATA[Gender]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="339" y="1" width="43" height="20" uuid="bc36ee9f-0aca-42d7-9350-35eb37adb6a5"/>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="20" width="794" height="1" uuid="449e4b72-5d6e-429b-8f63-8d5108959daa"/>
+			</line>
+			<textField>
+				<reportElement x="1" y="1" width="25" height="20" uuid="56cbfc27-9430-4eb7-a7f9-214d97f7e32a"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="377" y="1" width="100" height="20" uuid="91248b4b-e9b8-493e-8689-590d4629eaee"/>
+				<textFieldExpression><![CDATA[$F{groupname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="27" y="1" width="49" height="20" uuid="c4a74f03-b5cb-47f0-ae79-7a419dca94ba"/>
+				<textFieldExpression><![CDATA[$F{Custno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="477" y="2" width="100" height="18" uuid="b8116575-9ebb-4728-a555-6bd9fe161c1e"/>
+				<textFieldExpression><![CDATA[$F{PrimaryOfficerID}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="3" width="134" height="20" uuid="a0037030-a7a1-4ed5-9621-ba906c5d5c50"/>
+				<textFieldExpression><![CDATA[$F{Client Name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="3" width="72" height="20" uuid="6e3395a1-a348-4f92-a959-59b519df733c"/>
+				<textFieldExpression><![CDATA[$F{Phone}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="277" y="3" width="55" height="20" uuid="9575d312-eecd-4815-b702-3a7b3a7d5025"/>
+				<textFieldExpression><![CDATA[$F{Gender}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="332" y="3" width="50" height="17" uuid="ad95ace0-d598-4434-94ac-b1bfe222dcc3"/>
+				<textFieldExpression><![CDATA[$F{Status}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="116" y="5" width="97" height="18" uuid="716c1597-8b84-4a4e-9352-3ea49eef5ca3"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BRANCH TOTAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="344" y="0" width="49" height="20" uuid="33c5220a-d1be-44ca-8a4f-80989b2a50e4"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Status_3}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="252" y="5" width="71" height="18" uuid="f94bfd4f-9e47-4b35-b44d-7f2c7eb963ad"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ CLIENTS]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="19" width="164" height="17" uuid="6968182d-34a4-4a1e-8b31-46f3e8e61e34"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED  AS AT SYSTEM DATE:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="186" y="19" width="137" height="17" uuid="6cfe2e07-0991-4f0b-bc06-87a70ab72e8d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="16" width="80" height="20" uuid="380ae50e-6145-430e-88a3-bd386a61f4b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="16" width="40" height="20" uuid="433a17ff-0b7b-4c89-9e65-393342b510f3"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

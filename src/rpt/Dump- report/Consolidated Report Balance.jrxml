@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="824" leftMargin="9" rightMargin="9" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="c125e8e5-13c4-4108-8c34-fb4ff06ec03b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="todate" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from consolidatedreport l inner join branches b on l.branchcode=b.branchcode
+where date Between $P{fromdate}+' 00:00:00.000' and $P{todate}+' 00:00:00.000'
+
+order by l.Branchcode]]>
+	</queryString>
+	<field name="Branchcode" class="java.lang.String"/>
+	<field name="LoanBal" class="java.math.BigDecimal"/>
+	<field name="LoanBalInt" class="java.math.BigDecimal"/>
+	<field name="SavBal" class="java.math.BigDecimal"/>
+	<field name="Disburseamount" class="java.math.BigDecimal"/>
+	<field name="Savingsdeposit" class="java.math.BigDecimal"/>
+	<field name="NewClient" class="java.math.BigDecimal"/>
+	<field name="Date" class="java.lang.String"/>
+	<field name="timestamp" class="java.sql.Timestamp"/>
+	<field name="ClosedClient" class="java.math.BigDecimal"/>
+	<field name="Borrower" class="java.math.BigDecimal"/>
+	<field name="Membership" class="java.math.BigDecimal"/>
+	<field name="Overdue" class="java.math.BigDecimal"/>
+	<field name="BOD" class="java.math.BigDecimal"/>
+	<field name="BankBal" class="java.math.BigDecimal"/>
+	<field name="CashBal" class="java.math.BigDecimal"/>
+	<field name="Repay" class="java.math.BigDecimal"/>
+	<field name="Withdr" class="java.math.BigDecimal"/>
+	<field name="Branchname" class="java.lang.String"/>
+	<field name="BranchAddress" class="java.lang.String"/>
+	<field name="Telephone" class="java.lang.String"/>
+	<field name="Email" class="java.lang.String"/>
+	<variable name="SN" class="java.lang.Integer" incrementType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+	</variable>
+	<group name="Product">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="24">
+				<staticText>
+					<reportElement x="0" y="2" width="35" height="18" uuid="6ce53dac-eaa2-46bd-8d91-f44700462ae5"/>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0"/>
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.0"/>
+						<rightPen lineWidth="0.0"/>
+					</box>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="155" y="33" width="378" height="33" forecolor="#0000CC" uuid="830b8c25-2c0c-434f-b62a-4fbb07bb3840"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONSOLIDATED REPORT-BALANCE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="33" width="90" height="20" uuid="1116d277-0259-48c5-a8c8-d54410b97f2e"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$P{fromdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="36" width="48" height="17" uuid="f07c81ca-4044-49f6-8303-bc70f830e700"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PrintDate]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="35" y="13" width="512" height="20" uuid="8760a214-9240-4ba9-ac1e-e2f0f49a645d"/>
+				<textElement textAlignment="Justified">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="1" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="1" width="15" height="19" uuid="c34cd014-a1ee-4123-ab99-89f11d7e1621"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[SN]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="19" width="824" height="1" uuid="7d3ff18f-99b8-481e-832b-95d754a3fe61"/>
+			</line>
+			<staticText>
+				<reportElement x="15" y="1" width="20" height="20" uuid="b54aa774-6393-4e70-af6e-156dee82d623"/>
+				<text><![CDATA[Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="0" width="87" height="20" uuid="938e4ba8-0afa-49dc-9320-9faa09f11378"/>
+				<text><![CDATA[LoanBal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="0" width="79" height="20" uuid="6b69a14d-0106-4f8c-9260-4b95c6cc40ad"/>
+				<text><![CDATA[SavBal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="533" y="1" width="74" height="20" uuid="aeadc049-4f13-4a20-ad38-5ec1f39d88c8"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[BOD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="1" width="62" height="20" uuid="da82baf3-abe2-4456-a6d5-3c4482745f6b"/>
+				<text><![CDATA[Branchname]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="184" y="1" width="100" height="20" uuid="4ed67787-04f5-4d64-9baf-283b977ccb60"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[LoanBalInt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="0" width="38" height="20" uuid="e8589ce5-f6ac-44c2-9321-522026aab3b0"/>
+				<text><![CDATA[Borrower]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="384" y="1" width="69" height="20" uuid="a6bf7586-f165-4892-bc33-93a867aad2e8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Membership]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="650" y="0" width="100" height="20" uuid="45732efb-e34b-41d3-bfba-330ba0ec2aca"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[BankBal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="456" y="1" width="77" height="20" uuid="eb1b0b42-e007-4947-9b6e-05b7c511d616"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Overdue]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="750" y="1" width="44" height="20" uuid="dc9448b3-1e2e-4d74-b00d-21a58dbf5495"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CashBal]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="20" width="794" height="1" uuid="449e4b72-5d6e-429b-8f63-8d5108959daa"/>
+			</line>
+			<textField>
+				<reportElement x="-10" y="1" width="25" height="20" uuid="56cbfc27-9430-4eb7-a7f9-214d97f7e32a"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="15" y="0" width="20" height="20" uuid="059f0c63-4ec5-4685-a072-8715383b5307"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Branchcode}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="97" y="0" width="87" height="20" uuid="b5c59675-d177-4322-8a72-0b86ae7519eb"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LoanBal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="322" y="1" width="79" height="17" uuid="7ec986c0-98ba-4167-93ff-847df5b3aa6c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SavBal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="458" y="3" width="75" height="17" uuid="84603afa-3262-4df1-880e-84a3858c38c9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Overdue}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="536" y="1" width="74" height="18" uuid="1705d50e-560d-4968-92a6-2927373f69dd"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BOD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="1" width="62" height="20" uuid="9a3f2f06-0f1d-4b30-8334-b918a152c611"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Branchname}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="184" y="2" width="100" height="20" uuid="6d14e220-a01e-44b8-abf8-cfc8c8fe6e12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LoanBalInt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="284" y="2" width="38" height="20" uuid="876732b5-23a7-4e3b-a32d-aa415c2379f6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Borrower}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="384" y="3" width="69" height="20" uuid="cc3080ab-9656-4a79-b9b5-303d7df5083f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Membership}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="750" y="0" width="44" height="20" uuid="ad464964-ab24-465b-b24d-3f8a9cf6193d"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CashBal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="650" y="2" width="100" height="20" uuid="9cef112e-c8bb-4c5c-98af-93d1358cf735"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BankBal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="19" width="164" height="17" uuid="6968182d-34a4-4a1e-8b31-46f3e8e61e34"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED  AS AT SYSTEM DATE:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="164" y="19" width="137" height="17" uuid="6cfe2e07-0991-4f0b-bc06-87a70ab72e8d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="16" width="80" height="20" uuid="380ae50e-6145-430e-88a3-bd386a61f4b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="16" width="40" height="20" uuid="433a17ff-0b7b-4c89-9e65-393342b510f3"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="79" y="1" width="154" height="15" uuid="716c1597-8b84-4a4e-9352-3ea49eef5ca3"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ALL BRANCH TOTAL SO FAR:]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

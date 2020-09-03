@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="824" leftMargin="9" rightMargin="9" topMargin="20" bottomMargin="20" uuid="c125e8e5-13c4-4108-8c34-fb4ff06ec03b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2020-02-25 00:00:00.000"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[select ls.CustNo,ls.LoanID,Max(RunningBal/interestpercent) as DisbPrin,outstandingbal,disburseddate,accountname,sum(RepayWithInt)-SUM(servicedInt+ServicedPrin)  
+as OVAPLusInt,sum(PrinRepay-ServicedPrin) as OVAprinOnly,SUM(ServicedPrin) PrinRepaid,loanproduct,g.Groupid,lastPayDate,DATEDIFF(day,lastPayDate,getdate()) daysDue,primaryofficerID CSO from Loanschedule ls inner join Loans l on l.LoanID=ls.LoanID inner join 
+(select groupid,primaryofficerID from Groups)G on g.GroupID=l.groupid inner join (select LoanID,min(date) as lastPayDate from Loanschedule
+where Status ='not serviced' or Status ='Partial' group by custno,LoanID)  d  on d.LoanID=ls.LoanID 
+where l.status= 'Active' and date<=$P{fromdate}
+group by g.PrimaryOfficerID,ls.CustNo,ls.LoanID,outstandingbal,accountname,disburseddate,lastPayDate,g.Groupid,loanproduct
+having sum(PrinRepay-ServicedPrin)>1  and DATEDIFF(day,lastPayDate,getdate())>1]]>
+	</queryString>
+	<field name="CustNo" class="java.lang.String"/>
+	<field name="LoanID" class="java.lang.String"/>
+	<field name="DisbPrin" class="java.math.BigDecimal"/>
+	<field name="outstandingbal" class="java.math.BigDecimal"/>
+	<field name="disburseddate" class="java.lang.String"/>
+	<field name="accountname" class="java.lang.String"/>
+	<field name="OVAPLusInt" class="java.math.BigDecimal"/>
+	<field name="OVAprinOnly" class="java.math.BigDecimal"/>
+	<field name="PrinRepaid" class="java.math.BigDecimal"/>
+	<field name="loanproduct" class="java.lang.String"/>
+	<field name="Groupid" class="java.lang.String"/>
+	<field name="lastPayDate" class="java.sql.Timestamp"/>
+	<field name="daysDue" class="java.lang.Integer"/>
+	<field name="CSO" class="java.lang.String"/>
+	<variable name="SN" class="java.lang.Integer" incrementType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+	</variable>
+	<variable name="DisbPrin_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DisbPrin}]]></variableExpression>
+	</variable>
+	<variable name="outstandingbal_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{outstandingbal}]]></variableExpression>
+	</variable>
+	<variable name="PLusInt_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OVAPLusInt}]]></variableExpression>
+	</variable>
+	<variable name="prinOnly_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OVAprinOnly}]]></variableExpression>
+	</variable>
+	<variable name="PrinRepaid_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PrinRepaid}]]></variableExpression>
+	</variable>
+	<variable name="DisbPrin_2" class="java.math.BigDecimal" resetType="Group" resetGroup="LoanOfficer" calculation="Sum">
+		<variableExpression><![CDATA[$F{DisbPrin}]]></variableExpression>
+	</variable>
+	<variable name="outstandingbal_2" class="java.math.BigDecimal" resetType="Group" resetGroup="LoanOfficer" calculation="Sum">
+		<variableExpression><![CDATA[$F{outstandingbal}]]></variableExpression>
+	</variable>
+	<variable name="OVAPLusInt_1" class="java.math.BigDecimal" resetType="Group" resetGroup="LoanOfficer" calculation="Sum">
+		<variableExpression><![CDATA[$F{OVAPLusInt}]]></variableExpression>
+	</variable>
+	<variable name="OVAprinOnly_1" class="java.math.BigDecimal" resetType="Group" resetGroup="LoanOfficer" calculation="Sum">
+		<variableExpression><![CDATA[$F{OVAprinOnly}]]></variableExpression>
+	</variable>
+	<variable name="PrinRepaid_2" class="java.math.BigDecimal" resetType="Group" resetGroup="LoanOfficer" calculation="Sum">
+		<variableExpression><![CDATA[$F{PrinRepaid}]]></variableExpression>
+	</variable>
+	<variable name="sumPerf" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{daysDue}<=0 ? $F{OVAprinOnly}:0.00]]></variableExpression>
+	</variable>
+	<variable name="1-30" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{daysDue}>1 &&  $F{daysDue}<31 ? $F{OVAprinOnly}:0.00]]></variableExpression>
+	</variable>
+	<variable name="31-60" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{daysDue}>31 &&  $F{daysDue}<60 ? $F{OVAprinOnly}:0.00]]></variableExpression>
+	</variable>
+	<variable name="61-90" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{daysDue}>61 &&  $F{daysDue}<90 ? $F{OVAprinOnly}:0.00]]></variableExpression>
+	</variable>
+	<variable name="91+" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{daysDue}>91 ? $F{OVAprinOnly}:0.00]]></variableExpression>
+	</variable>
+	<group name="LoanOfficer">
+		<groupExpression><![CDATA[$F{CSO}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="210" y="0" width="121" height="20" uuid="ece3d988-23aa-43f8-8e71-bfbca13d4855"/>
+					<textFieldExpression><![CDATA[$F{CSO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="59" y="0" width="76" height="20" uuid="1bee1e77-7834-416b-a875-b3363758776c"/>
+					<text><![CDATA[CSO's NAME:]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50">
+				<textField pattern="#,##0.00">
+					<reportElement x="394" y="3" width="78" height="20" uuid="e8b105bf-f533-4fbc-8b11-203d56ac30e5"/>
+					<textFieldExpression><![CDATA[$V{DisbPrin_2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="476" y="2" width="64" height="20" uuid="eab4257c-7350-4328-b8dd-fd6ed7fda616"/>
+					<textFieldExpression><![CDATA[$V{outstandingbal_2}.negate()]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="2" width="73" height="20" uuid="b6b2682a-6dc4-494b-85ef-dea9dbbac0dd"/>
+					<textFieldExpression><![CDATA[$V{OVAprinOnly_1}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="210" y="3" width="121" height="20" uuid="1cdfec5a-44ca-415e-a799-3769edcceca2"/>
+					<textFieldExpression><![CDATA[$F{CSO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="unionname">
+		<groupExpression><![CDATA[$F{Groupid}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="241" y="36" width="304" height="33" uuid="830b8c25-2c0c-434f-b62a-4fbb07bb3840"/>
+				<textElement textAlignment="Justified">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOAN BALANCE CLASSIFICATION REPORT]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="65" y="36" width="145" height="17" uuid="1116d277-0259-48c5-a8c8-d54410b97f2e"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$P{fromdate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="36" width="79" height="17" uuid="f07c81ca-4044-49f6-8303-bc70f830e700"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED ON:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="159" y="9" width="512" height="20" forecolor="#9900FF" uuid="8760a214-9240-4ba9-ac1e-e2f0f49a645d"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="2" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="15" y="1" width="48" height="19" backcolor="#CCFFCC" uuid="41daa9b9-189b-4237-b275-98f89b347711"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[CustNo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="1" width="15" height="19" backcolor="#CCFFCC" uuid="c34cd014-a1ee-4123-ab99-89f11d7e1621"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="122" y="0" width="146" height="20" backcolor="#CCFFCC" uuid="72861117-a8d8-432d-a66f-1032a8f387ac"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Borrower's Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="0" width="83" height="17" backcolor="#CCFFCC" uuid="350ce228-edcc-43a0-ba68-b030b837ccd6"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Outstandingbal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="547" y="0" width="74" height="20" backcolor="#CCFFCC" uuid="27875a29-2bd2-46b7-bf60-7a83f0187b27"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Overdue(P)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="394" y="0" width="68" height="20" backcolor="#CCFFCC" uuid="0ecd034a-e727-4190-9294-dacb6315c0c3"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DisbPrin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="65" y="6" width="59" height="14" backcolor="#CCFFCC" uuid="10ae6f63-92c0-4286-91ec-75d310082e9a"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[LoanID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="782" y="1" width="42" height="17" backcolor="#CCFFCC" uuid="c3991847-2718-461d-883d-3ccb1cd6d5a8"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOST              91+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="5" width="63" height="13" backcolor="#CCFFCC" uuid="0cac1dae-230b-4f09-9c39-e9042ae16826"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DisburDate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="268" y="5" width="63" height="13" backcolor="#CCFFCC" uuid="dbe7be4c-03c9-4bbe-8bc5-ef7e74c00bb7"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[loanproduct]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="661" y="1" width="39" height="19" uuid="f931c4ea-4efd-40fa-a92f-002a3dbdc3a5"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[PASS & WATCH  1-30]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="701" y="1" width="39" height="19" uuid="8dda5120-becb-4528-83a1-9b104fe494fe"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[DOUBTFUL   31-60]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="740" y="0" width="39" height="19" uuid="52aa15cf-b55b-45ca-8802-3ac4f2e2b310"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SUB-STANDARD                        61-90]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="621" y="2" width="39" height="18" uuid="3628b796-e931-4075-ba4f-fdc06883ede5"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Performing]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="15" y="3" width="48" height="20" uuid="d8564919-0ca4-4579-b4fd-6a4b4c7043f1"/>
+				<textFieldExpression><![CDATA[$F{CustNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="20" width="794" height="1" uuid="449e4b72-5d6e-429b-8f63-8d5108959daa"/>
+			</line>
+			<textField>
+				<reportElement x="-10" y="1" width="25" height="20" uuid="56cbfc27-9430-4eb7-a7f9-214d97f7e32a"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="122" y="3" width="146" height="20" uuid="4bb26987-284e-4510-b06f-4df5bd476e6e"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{accountname}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy/MM/dd">
+				<reportElement x="331" y="0" width="63" height="20" uuid="13e49122-a23f-4590-a4b3-f73fa9d49667"/>
+				<textFieldExpression><![CDATA[$F{disburseddate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="472" y="0" width="73" height="20" uuid="660c9aff-6df5-430b-8b33-f290df330e54"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{outstandingbal}.negate()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="547" y="1" width="74" height="20" uuid="d5b3336e-7329-4a0f-9a2d-95601b44a88b"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OVAprinOnly}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="1" width="57" height="20" uuid="eeee0b14-6e74-4665-8961-5da620308f68"/>
+				<textFieldExpression><![CDATA[$F{LoanID}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="3" y="0" width="794" height="1" backcolor="#CCFFCC" uuid="501d1008-fa68-4f6b-b2f7-68e4a2668b0f"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement x="394" y="3" width="78" height="20" uuid="5ccbab50-452e-4495-ae23-71d15d34d180"/>
+				<textFieldExpression><![CDATA[$F{DisbPrin}.setScale(-1,RoundingMode.HALF_UP)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="268" y="3" width="63" height="20" uuid="16bebfa4-44f4-4d33-bda3-154e758dad87"/>
+				<textFieldExpression><![CDATA[$F{loanproduct}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="621" y="0" width="40" height="20" uuid="79dbc3e0-0ce1-4a7e-99be-3698646c0244"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{daysDue}<=0 ? $F{outstandingbal}.negate():0.00]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="661" y="3" width="40" height="20" uuid="b24ad444-699d-41e5-a372-3fbf2b22f53c"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{daysDue}>1 &&  $F{daysDue}<31 ? $F{outstandingbal}.negate():0.00]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="700" y="0" width="40" height="20" uuid="ac757e4e-bdef-465b-b1d5-aef9cc254e0f"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{daysDue}>31 &&  $F{daysDue}<60 ? $F{outstandingbal}.negate():0.00]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="740" y="0" width="40" height="20" uuid="26367b5f-6a12-4d81-a4ce-5960a1fa7073"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{daysDue}>61 &&  $F{daysDue}<90 ? $F{outstandingbal}.negate():0.00]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="779" y="1" width="40" height="20" uuid="3326f036-69d7-41c9-a6e0-0bcf5e5b75e4"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{daysDue}>91 ? $F{outstandingbal}.negate():0.00]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="46" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="21" y="26" width="78" height="17" uuid="ea501010-e6cc-4899-b8f7-2e11604b7c5d"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{DisbPrin_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="100" y="26" width="83" height="17" uuid="02dbdac1-45e5-4ae7-a59e-e9d26d5f70b8"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{outstandingbal_1}.negate()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="182" y="26" width="85" height="17" uuid="7bcc3c2a-1258-440a-bc3a-02af3438458f"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{PLusInt_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="268" y="26" width="73" height="17" uuid="606da64c-244e-4087-ac2d-2190a9ff7dfc"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{prinOnly_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="341" y="26" width="78" height="17" uuid="80d413ef-5327-41b3-b084-452aa293fbe6"/>
+				<box>
+					<pen lineWidth="0.75"/>
+					<topPen lineWidth="0.75"/>
+					<leftPen lineWidth="0.75"/>
+					<bottomPen lineWidth="0.75"/>
+					<rightPen lineWidth="0.75"/>
+				</box>
+				<textFieldExpression><![CDATA[$V{PrinRepaid_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="21" y="6" width="68" height="20" backcolor="#CCFFCC" uuid="81389d00-2cc4-4a76-925d-9306cf39bb4d"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DisbPrin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="6" width="83" height="17" backcolor="#CCFFCC" uuid="978fddb7-e8c5-4573-9848-0808851df3b2"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Outstandingbal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="184" y="10" width="84" height="16" backcolor="#CCFFCC" uuid="df9ed584-f9f8-4e41-bedf-06f87de7790c"/>
+				<box>
+					<pen lineColor="#990033"/>
+					<topPen lineColor="#990033"/>
+					<leftPen lineColor="#990033"/>
+					<bottomPen lineColor="#990033"/>
+					<rightPen lineColor="#990033"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OverDue(P+I)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="9" width="73" height="15" backcolor="#CCFFCC" uuid="1e20765d-187e-4065-844b-d0b373eabf20"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Overdue(P)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="9" width="77" height="15" backcolor="#CCFFCC" uuid="02022c7f-75e9-49c5-b6c6-382ab3cef7bb"/>
+				<textElement verticalAlignment="Bottom">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[PrinRepaid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="492" y="8" width="57" height="18" uuid="5c733247-e818-4d99-a6fc-6981706dd05b"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[Performing]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="682" y="8" width="70" height="16" uuid="84436aa8-fda7-466f-ad9a-e71cf077ab2e"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SUB-STANDARD                        61-90]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="752" y="10" width="67" height="15" backcolor="#CCFFCC" uuid="3d65dc2c-1051-4211-98d9-401813c545ff"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOST              91+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="549" y="9" width="62" height="19" uuid="a7cc7949-1da6-42a1-ac1a-dcbe0c718cb0"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[PASS & WATCH  1-30]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="612" y="9" width="70" height="15" uuid="79dd3d11-7a96-4f8d-ac61-86e9d7e4b397"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[DOUBTFUL   31-60]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="492" y="27" width="57" height="16" uuid="8931be46-3b19-441f-a65e-0f6e8224c613"/>
+				<textFieldExpression><![CDATA[$V{sumPerf}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="550" y="27" width="62" height="17" uuid="22847947-d2a7-4fff-910f-dd57a2cbabfe"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{1-30}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="612" y="26" width="70" height="17" uuid="ec9c33e4-2603-4437-be77-519a60f9eb61"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{31-60}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="682" y="26" width="70" height="17" uuid="eba45cce-d1a8-46e7-9023-01d837325c96"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{61-90}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="752" y="26" width="67" height="17" uuid="52422e6b-2854-45f2-82b2-703665ea61c4"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{91+}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="19" width="164" height="17" uuid="6968182d-34a4-4a1e-8b31-46f3e8e61e34"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED  AS AT SYSTEM DATE:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="164" y="19" width="137" height="17" uuid="6cfe2e07-0991-4f0b-bc06-87a70ab72e8d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="16" width="80" height="20" uuid="380ae50e-6145-430e-88a3-bd386a61f4b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="16" width="40" height="20" uuid="433a17ff-0b7b-4c89-9e65-393342b510f3"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

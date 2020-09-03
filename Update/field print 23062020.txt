@@ -1,0 +1,40 @@
+USE [BankDatabase]
+GO
+
+/****** Object:  View [dbo].[Fieldprintview]    Script Date: 06/30/2020 13:42:18 ******/
+SET ANSI_NULLS ON
+GO
+DROP VIEW [dbo].[Fieldprintview]
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE VIEW [dbo].[Fieldprintview]
+AS
+SELECT     *
+FROM         (SELECT     custno, productid, runningbal
+                       FROM          deposit
+                       UNION
+                       SELECT     custno, loanproduct, OutstandingBal * interestPercent
+                       FROM         Loans
+                       WHERE     status = 'Active') e PIVOT (Sum(runningbal) FOR productid IN ([Regular Savings], [Voluntary Savings], [Future Savings], [Union Purse Savings], [Regln6], [Regln7], [Regln8], [FARMLN6], 
+                      [INDLN6], [MIDTMLN], [SPELN], [BasicLN], [SocLN1], [SocLN2], [SocLN3], [SocLN4], [SocLN5], [SocLN6], [SocLN7], [SocLN8], [SocLN9], [SocLN10], [SocLN11], [SocLN12], [BSLLN1], [BSLLN2], 
+                      [BSLLN3], [BSLLN4], [BSLLN5], [BSLLN6], [BSLLN7], [BSLLN8], [BSLLN9], [BSLLN10], [BSLLN11], [BSLLN12])) p LEFT OUTER JOIN
+                          (SELECT     custno cust2, loanid Lnid, sum(RepayWithInt) AS loandue, sum(RepayWithInt) - SUM(servicedPrin + servicedInt) AS overdue, max(RunningBal) AS disbursed, 
+                                                   SUM(servicedPrin + servicedInt) AS repaid
+                            FROM          Loanschedule
+                            WHERE      date < CONVERT(varchar, GETDATE(), 23) + ' 00:00:00.000' AND remark <> 'C' AND status <> 'cancel' and status <> 'final'
+
+                            GROUP BY Custno, LoanID) ls ON ls.Cust2 = p.CustNo LEFT OUTER JOIN
+                          (SELECT     loanid, instalment, disburseddate, Loanproduct
+                            FROM          loans
+                            WHERE      Status = 'Active') l ON l.LoanID = ls.LnID LEFT OUTER JOIN
+                          (SELECT     loanid LID, SUM(servicedInt + servicedPrin) Actualpaid
+                            FROM          Loanschedule
+                            GROUP BY LoanID) lr ON lr.lid = L.loanid INNER JOIN
+                          (SELECT     custno cust3, Firstname + ' ' + Middlename + ' ' + lastname Accountname, DateCreated ApprovedDate, groupID
+                            FROM          clients) c ON c.cust3 = p.custno
+
+GO
+
+

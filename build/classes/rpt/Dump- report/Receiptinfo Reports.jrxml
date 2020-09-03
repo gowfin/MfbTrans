@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="20" bottomMargin="20" uuid="c125e8e5-13c4-4108-8c34-fb4ff06ec03b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fromdate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2016-01-02"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Compname" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["OGOJA DIOCESAN AGRICULTURAL INTERVENTION PROGRAM"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="todate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["2019-11-11"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from Transactn
+where (debitGL='11103-547' or CreditGL='11103-547')and dateeffective between $P{fromdate} and $P{todate} 
+]]>
+	</queryString>
+	<field name="AccountID" class="java.lang.String"/>
+	<field name="TranID" class="java.lang.String"/>
+	<field name="Amount" class="java.math.BigDecimal"/>
+	<field name="BranchID" class="java.lang.String"/>
+	<field name="ChequeNbr" class="java.lang.String"/>
+	<field name="CreditGL" class="java.lang.String"/>
+	<field name="DebitGL" class="java.lang.String"/>
+	<field name="DateEffective" class="java.sql.Timestamp"/>
+	<field name="CustNo" class="java.lang.String"/>
+	<field name="Reversed" class="java.lang.Boolean"/>
+	<field name="PassbkPrinted" class="java.lang.Boolean"/>
+	<field name="DateProcessing" class="java.sql.Timestamp"/>
+	<field name="ProductID" class="java.lang.String"/>
+	<field name="TransactionNbr" class="java.lang.String"/>
+	<field name="SequenceNbr" class="java.lang.String"/>
+	<field name="RunningBal" class="java.math.BigDecimal"/>
+	<field name="StmtRef" class="java.lang.String"/>
+	<field name="CurrencyCode" class="java.lang.String"/>
+	<field name="OverrideBy" class="java.lang.String"/>
+	<field name="Payee" class="java.lang.String"/>
+	<field name="RowID" class="java.lang.String"/>
+	<field name="LockID" class="java.lang.String"/>
+	<field name="DateEdited" class="java.sql.Timestamp"/>
+	<field name="EditedBy" class="java.lang.String"/>
+	<field name="ValueDate" class="java.sql.Timestamp"/>
+	<field name="CreatedBy" class="java.lang.String"/>
+	<field name="DateUpdated" class="java.sql.Timestamp"/>
+	<field name="UpdatedBy" class="java.lang.String"/>
+	<field name="UpdateModule" class="java.lang.String"/>
+	<field name="AuthBy" class="java.lang.String"/>
+	<field name="prevDateLastRepay" class="java.sql.Timestamp"/>
+	<field name="prevDateNextAccrual" class="java.sql.Timestamp"/>
+	<field name="prevDateLastAccrual" class="java.sql.Timestamp"/>
+	<field name="prevDateLastPosted" class="java.sql.Timestamp"/>
+	<field name="prevDateTransaction" class="java.sql.Timestamp"/>
+	<field name="prevInterestOwed" class="java.math.BigDecimal"/>
+	<field name="prevDateCurrentInt" class="java.sql.Timestamp"/>
+	<field name="Reference" class="java.lang.String"/>
+	<field name="OverrideReason" class="java.lang.String"/>
+	<field name="CenterID" class="java.lang.String"/>
+	<field name="rowversion" class="java.lang.Object"/>
+	<variable name="SN" class="java.lang.Integer" incrementType="Page" calculation="Count">
+		<variableExpression><![CDATA[$V{COLUMN_NUMBER}]]></variableExpression>
+	</variable>
+	<variable name="Amount_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Days" calculation="Sum">
+		<variableExpression><![CDATA[$F{Amount}]]></variableExpression>
+	</variable>
+	<variable name="Amount_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Amount}]]></variableExpression>
+	</variable>
+	<group name="Days">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="23">
+				<textField>
+					<reportElement x="86" y="0" width="121" height="23" uuid="fd78af70-6895-4ac8-9b97-87269ee5571f"/>
+					<textFieldExpression><![CDATA["Daily Total ("+$F{DateEffective}+")"]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="346" y="3" width="100" height="20" uuid="58045e4f-1278-4028-9ecb-09835182b35e"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Amount_1}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="155" y="26" width="331" height="32" uuid="830b8c25-2c0c-434f-b62a-4fbb07bb3840"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cashier Daily Report]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="55" y="41" width="117" height="17" uuid="1116d277-0259-48c5-a8c8-d54410b97f2e"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$P{fromdate}  + "      TO:"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="41" width="48" height="17" uuid="f07c81ca-4044-49f6-8303-bc70f830e700"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[From]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="98" y="4" width="449" height="20" uuid="8760a214-9240-4ba9-ac1e-e2f0f49a645d"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Compname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="172" y="42" width="100" height="16" uuid="0fcfa81c-07b9-4ca0-bacf-5abf7f568d12"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$P{todate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="22" y="1" width="25" height="19" uuid="c34cd014-a1ee-4123-ab99-89f11d7e1621"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<text><![CDATA[SN]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="19" width="589" height="1" uuid="7d3ff18f-99b8-481e-832b-95d754a3fe61"/>
+			</line>
+			<staticText>
+				<reportElement x="47" y="0" width="91" height="20" uuid="897cd71b-c029-41c9-b403-00455705adeb"/>
+				<text><![CDATA[TransactionNbr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="346" y="0" width="67" height="20" uuid="de9139c3-8e37-44cb-ba63-3a1e18cba965"/>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="159" y="0" width="48" height="20" uuid="0940b270-0864-42d2-96d4-1c82b7386e4f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="0" width="100" height="20" uuid="a947f607-6637-44b0-9440-b03c7e08d782"/>
+				<text><![CDATA[StmtRef]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="21" width="591" height="1" uuid="449e4b72-5d6e-429b-8f63-8d5108959daa"/>
+			</line>
+			<textField>
+				<reportElement x="22" y="1" width="25" height="20" uuid="56cbfc27-9430-4eb7-a7f9-214d97f7e32a"/>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="47" y="3" width="91" height="20" uuid="b7f60f39-0692-44ac-bf09-07ec5a98487f"/>
+				<textFieldExpression><![CDATA[$F{TransactionNbr}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="346" y="3" width="67" height="20" uuid="05f1cb9c-20d0-4093-9986-91af9fbe517f"/>
+				<textFieldExpression><![CDATA[$F{Amount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="246" y="1" width="100" height="20" uuid="f17b2e4f-ab84-4fdd-8c3e-65e6fe9c3184"/>
+				<textFieldExpression><![CDATA[$F{StmtRef}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="159" y="2" width="48" height="20" uuid="0d3082d1-e92d-4eb1-880a-4d57c33363b2"/>
+				<textFieldExpression><![CDATA[$F{DateEffective}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="126" y="5" width="111" height="18" uuid="716c1597-8b84-4a4e-9352-3ea49eef5ca3"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUNNING TOTAL]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="346" y="3" width="100" height="20" uuid="5c7890e7-f4b1-4f89-89d6-907cad33551f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Amount_2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="12" y="19" width="164" height="17" uuid="6968182d-34a4-4a1e-8b31-46f3e8e61e34"/>
+				<textElement textAlignment="Justified">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRINTED  AS AT SYSTEM DATE:]]></text>
+			</staticText>
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="186" y="19" width="137" height="17" uuid="6cfe2e07-0991-4f0b-bc06-87a70ab72e8d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="453" y="16" width="80" height="20" uuid="380ae50e-6145-430e-88a3-bd386a61f4b6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="536" y="16" width="40" height="20" uuid="433a17ff-0b7b-4c89-9e65-393342b510f3"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
